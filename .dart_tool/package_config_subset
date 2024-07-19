@@ -1,7 +1,7 @@
 music_app
 2.18
-file:///Users/aman/Downloads/music_app_qa_case/
-file:///Users/aman/Downloads/music_app_qa_case/lib/
+file:///Users/aman/Repo/music_app_qa_case/
+file:///Users/aman/Repo/music_app_qa_case/lib/
 _fe_analyzer_shared
 2.17
 file:///Users/aman/development/flutter/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-47.0.0/
@@ -490,6 +490,10 @@ test_core
 2.14
 file:///Users/aman/development/flutter/.pub-cache/hosted/pub.dartlang.org/test_core-0.4.16/
 file:///Users/aman/development/flutter/.pub-cache/hosted/pub.dartlang.org/test_core-0.4.16/lib/
+testreport
+2.7
+file:///Users/aman/development/flutter/.pub-cache/hosted/pub.dartlang.org/testreport-1.2.0/
+file:///Users/aman/development/flutter/.pub-cache/hosted/pub.dartlang.org/testreport-1.2.0/lib/
 timing
 2.12
 file:///Users/aman/development/flutter/.pub-cache/hosted/pub.dartlang.org/timing-1.0.0/

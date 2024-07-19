@@ -895,6 +895,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.16"
+  testreport:
+    dependency: "direct dev"
+    description:
+      name: testreport
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   timing:
     dependency: transitive
     description:

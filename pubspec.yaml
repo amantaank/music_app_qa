@@ -45,7 +45,7 @@ dependencies:
 dev_dependencies:
   integration_test:
     sdk: flutter
-  junitreport: ^2.0.0
+  testreport: ^1.0.0
   flutter_test:
     sdk: flutter
   flutter_driver:

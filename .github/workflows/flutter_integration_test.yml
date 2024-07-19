@@ -1,4 +1,4 @@
-name: Flutter Integration Test
+name: Flutter Integration Test (iOS)
 
 on:
   push:
@@ -10,27 +10,37 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.3.10'  # Specify the Flutter version explicitly
+        flutter-version: '3.3.0'  # Specify the Flutter version you need
+
+    - name: Install CocoaPods
+      run: |
+        sudo gem install cocoapods
+        pod setup
 
     - name: Install dependencies
       run: flutter pub get
 
+    - name: Build for iOS
+      run: flutter build ios --no-codesign
+
     - name: Run integration tests
       run: |
-        mkdir -p test-reports
-        flutter test integration_tests/tests/add_to_favorites_test.dart --reporter json > test-reports/report.json
-        cat test-reports/report.json | flutter pub run testreport:tojunit --output test-reports/report.xml
+        flutter drive \
+          --driver=test_driver/integration_test.dart \
+          --target=integration_tests/tests/add_to_favorites_test.dart \
+          -d 'iPhone 12'
 
-    - name: Upload test report
+    - name: Upload test results
       uses: actions/upload-artifact@v2
       with:
         name: test-report
-        path: test-reports/report.xml
+        path: build/ios/Build/Products/Debug-iphonesimulator/

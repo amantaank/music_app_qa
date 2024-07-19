@@ -19,7 +19,13 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.3.0'  # Specify the Flutter version you need
+        flutter-version: '3.3.10'
+
+    - name: Install Dart
+      run: |
+        brew tap dart-lang/dart
+        brew install dart
+        dart --version
 
     - name: Install CocoaPods
       run: |

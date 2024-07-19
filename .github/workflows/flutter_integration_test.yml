@@ -18,12 +18,7 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '2.10.5'  # Specify the Flutter version explicitly
-
-    - name: Set up Dart
-      uses: dart-lang/setup-dart@v1
-      with:
-        sdk: '>=2.18.1 <3.0.0'
+        flutter-version: '3.0.5'  # Specify the Flutter version explicitly
 
     - name: Install dependencies
       run: flutter pub get

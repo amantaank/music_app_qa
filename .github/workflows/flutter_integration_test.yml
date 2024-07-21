@@ -19,7 +19,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.10'
+          flutter-version: '3.3.2'
 
       - name: Install dependencies
         run: flutter pub get
@@ -37,21 +37,12 @@ jobs:
 
       - name: Start iOS Simulator
         run: |
-          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          sudo xcode-select --switch /Applications/Xcode.app/Cgit statusontents/Developer
           sudo xcodebuild -runFirstLaunch
-          sudo xcrun simctl boot "iPhone 15"
+          sudo xcrun simctl boot "iPhone 11"
         continue-on-error: true
 
       - name: Run integration tests
-        run: |
-          flutter drive \
-            --driver=test_driver/integration_test.dart \
-            --target=integration_tests/tests/add_to_favorites_test.dart \
-            -d 'iPhone 15 (com.apple.CoreSimulator.SimDeviceType.iPhone-15)'
-  
-      - name: Upload test results
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-report
-          path: build/ios/Build/Products/Debug-iphonesimulator/
-  
+        run: flutter drive --driver=test_driver/integration_test.dart --target=integration_tests/tests/add_to_favorites_test.dart -d "iPhone 11"
+        env:
+          DISPLAY: ":0"

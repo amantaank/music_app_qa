@@ -36,8 +36,8 @@ jobs:
         run: |
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           sudo xcodebuild -runFirstLaunch
-          sudo xcrun simctl boot "iPhone 12"
+          sudo xcrun simctl boot "iPhone 15"
         continue-on-error: true
 
       - name: Run integration tests
-        run: flutter drive --target=test_driver/app_test.dart -d "iPhone 12"
+        run: flutter drive --target=test_driver/app_test.dart -d "iPhone 15"

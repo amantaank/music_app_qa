@@ -1,4 +1,4 @@
-name: Flutter Integration Test (iOS)
+name: Flutter Integration Tests on iOS
 
 on:
   push:
@@ -13,40 +13,31 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.3.10'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.2'
 
-    - name: Install Dart
-      run: |
-        brew tap dart-lang/dart
-        brew install dart
-        dart --version
+      - name: Install dependencies
+        run: flutter pub get
 
-    - name: Install CocoaPods
-      run: |
-        sudo gem install cocoapods
-        pod setup
+      - name: Set up Ruby for CocoaPods
+        run: |
+          sudo gem install cocoapods
 
-    - name: Install dependencies
-      run: flutter pub get
+      - name: Install CocoaPods dependencies
+        run: pod install
+        working-directory: ios
 
-    - name: Build for iOS
-      run: flutter build ios --no-codesign
+      - name: Start iOS Simulator
+        run: |
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          sudo xcodebuild -runFirstLaunch
+          sudo xcrun simctl boot "iPhone 12"
+        continue-on-error: true
 
-    - name: Run integration tests
-      run: |
-        flutter drive \
-          --driver=test_driver/integration_test.dart \
-          --target=integration_tests/tests/add_to_favorites_test.dart \
-          -d 'iPhone 12'
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v2
-      with:
-        name: test-report
-        path: build/ios/Build/Products/Debug-iphonesimulator/
+      - name: Run integration tests
+        run: flutter drive --target=test_driver/app_test.dart -d "iPhone 12"

@@ -32,17 +32,14 @@ jobs:
         run: pod install
         working-directory: ios
 
-      - name: List simulators
-        run: xcrun simctl list
-
       - name: Start iOS Simulator
         run: |
-          sudo xcode-select --switch /Applications/Xcode.app/Cgit statusontents/Developer
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           sudo xcodebuild -runFirstLaunch
-          sudo xcrun simctl boot "iPhone 11"
+          sudo xcrun simctl boot "iPhone 12"
         continue-on-error: true
 
       - name: Run integration tests
-        run: flutter drive --driver=test_driver/integration_test.dart --target=integration_tests/tests/add_to_favorites_test.dart -d "iPhone 11"
+        run: flutter drive --driver=test_driver/integration_test.dart --target=integration_tests/tests/add_to_favorites_test.dart -d "iPhone 12"
         env:
           DISPLAY: ":0"

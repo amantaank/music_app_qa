@@ -5,4 +5,5 @@ class TestData {
   static const String albumNameError = "Justice";
   static const String trackName = '1-All Around the World';
   static const String tracksTitle = 'Believe Tracks:';
+  static const String albumNameNA = "Testing";
 }

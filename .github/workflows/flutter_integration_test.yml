@@ -1,45 +1,50 @@
-name: Flutter Integration Tests on iOS
+name: Flutter Integration Test on iOS
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
-  build:
+  test:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.3.2'
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: 'latest'
 
-      - name: Install dependencies
-        run: flutter pub get
+    - name: Install dependencies
+      run: flutter pub get
 
-      - name: Set up Ruby for CocoaPods
-        run: |
-          sudo gem install cocoapods
+    - name: Set up Xcode
+      run: |
+        sudo xcode-select -s /Applications/Xcode_15.0.app/Contents/Developer
+        sudo xcodebuild -license accept
+        sudo gem install cocoapods
 
-      - name: Install CocoaPods dependencies
-        run: pod install
-        working-directory: ios
+    - name: Create screenshots directory
+      run: mkdir -p test/screenshots
 
-      - name: Start iOS Simulator
-        run: |
-          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-          sudo xcodebuild -runFirstLaunch
-          sudo xcrun simctl boot "iPhone 12"
-        continue-on-error: true
+    - name: Build iOS app for testing
+      run: flutter build ios --debug --no-codesign
 
-      - name: Run integration tests
-        run: flutter drive --driver=test_driver/integration_test.dart --target=integration_tests/tests/add_to_favorites_test.dart -d "iPhone 12"
-        env:
-          DISPLAY: ":0"
+    - name: Start iPhone simulator
+      run: |
+        open -a Simulator --args -CurrentDeviceUDID $(xcrun simctl create "iPhone 15" com.apple.CoreSimulator.SimDeviceType.iPhone-15)
+        xcrun simctl boot "iPhone 15"
+        xcrun simctl bootstatus "iPhone 15"
+
+    - name: Install app on simulator
+      run: flutter install --device-id "iPhone 15"
+
+    - name: Run integration tests
+      run: flutter drive --target=test_driver/app.dart --device-id "iPhone 15"
+
+    - name: Upload test artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-screenshots
+        path: test/screenshots

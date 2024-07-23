@@ -13,14 +13,13 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: 'latest'
-
+        flutter-version: '3.3.10'  
     - name: Install dependencies
       run: flutter pub get
 
     - name: Set up Xcode
       run: |
-        sudo xcode-select -s /Applications/Xcode_15.0.app/Contents/Developer
+        sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
         sudo xcodebuild -license accept
         sudo gem install cocoapods
 
@@ -32,15 +31,15 @@ jobs:
 
     - name: Start iPhone simulator
       run: |
-        open -a Simulator --args -CurrentDeviceUDID $(xcrun simctl create "iPhone 15" com.apple.CoreSimulator.SimDeviceType.iPhone-15)
-        xcrun simctl boot "iPhone 15"
-        xcrun simctl bootstatus "iPhone 15"
+        export SIMULATOR_UDID=$(xcrun simctl create "iPhone 15" com.apple.CoreSimulator.SimDeviceType.iPhone-14)
+        xcrun simctl boot $SIMULATOR_UDID
+        xcrun simctl bootstatus $SIMULATOR_UDID
 
     - name: Install app on simulator
-      run: flutter install --device-id "iPhone 15"
+      run: flutter install --device-id $SIMULATOR_UDID
 
     - name: Run integration tests
-      run: flutter drive --target=test_driver/app.dart --device-id "iPhone 15"
+      run: flutter drive --target=test_driver/app.dart --device-id $SIMULATOR_UDID
 
     - name: Upload test artifacts
       if: always()

@@ -44,7 +44,9 @@ jobs:
       run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
 
     - name: Run integration tests
-      run: flutter drive --target=test_driver/app.dart --device-id ${{ env.SIMULATOR_UDID }} --machine > test/reports/integration_test_results.json
+      run: |
+        flutter drive --target=test_driver/app.dart --device-id ${{ env.SIMULATOR_UDID }} > test/reports/integration_test_results.txt
+        cp build/host_integration_test/test_output/junit/test-outputs.json test/reports/integration_test_results.json
 
     - name: Upload test screenshots
       if: always()

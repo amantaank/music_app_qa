@@ -1,6 +1,9 @@
+// Import necessary packages for testing
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+
+// Import the main application and various pages used in the tests
 import 'package:music_app/main.dart' as app;
 import 'package:music_app/pages/home_page.dart';
 import 'package:music_app/pages/search_page.dart';
@@ -8,17 +11,21 @@ import 'package:music_app/pages/album_page.dart';
 import 'package:music_app/data/test_data.dart';
 
 void main() {
+  // Ensure integration test bindings are initialized
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;
 
+  // Define a group of tests for end-to-end testing
   group('end-to-end test', () {
-    testWidgets('Verify Album details for an Artist', (tester) async {
+    testWidgets('Capture the screenshort when there is no album when itsearched', (tester) async {
       app.main();
       await tester.pumpAndSettle();
 
+      // Initialize page objects
       final homePage = HomePage(tester);
       final searchPage = SearchPage(tester);
       final albumPage = AlbumPage(tester);
-
+      
+       // Perform the search
       await homePage.openSearch();
       await tester.pumpAndSettle();
 

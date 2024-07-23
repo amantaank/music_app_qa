@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:music_app/main.dart' as app;
-import '../pages/home_page.dart';
-import '../pages/search_page.dart';
-import '../pages/album_page.dart';
-import '../data/test_data.dart';
+import 'package:music_app/pages/home_page.dart';
+import 'package:music_app/pages/search_page.dart';
+import 'package:music_app/pages/album_page.dart';
+import 'package:music_app/data/test_data.dart';
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized() as IntegrationTestWidgetsFlutterBinding;

@@ -49,22 +49,31 @@ jobs:
     - name: Install app on simulator
       run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
 
-    - name: Run integration tests with retry
+    - name: Run integration tests with retry and cleanup
       run: |
         for test in integration_tests/tests/*.dart; do
           echo "Running test: $test"
           RETRY_COUNT=3
+          SUCCESS=false
           for i in $(seq 1 $RETRY_COUNT); do
             if flutter drive --driver integration_tests/app.dart --target=$test --device-id ${{ env.SIMULATOR_UDID }} > integration_tests/reports/$(basename $test .dart)_results.txt; then
               echo "Test $test passed on attempt $i"
+              SUCCESS=true
               break
             elif [ $i -lt $RETRY_COUNT ]; then
               echo "Test $test failed on attempt $i, retrying..."
+              flutter drive --driver integration_tests/app.dart --target=$test --device-id ${{ env.SIMULATOR_UDID }} --no-build --start-paused --use-existing-app || true
+              flutter drive --target=$test --device-id ${{ env.SIMULATOR_UDID }} --no-build --resume || true
               sleep 10
             else
               echo "Test $test failed after $RETRY_COUNT attempts"
             fi
           done
+          if $SUCCESS; then
+            echo "Test $test completed successfully"
+          else
+            echo "Test $test did not succeed after $RETRY_COUNT attempts"
+          fi
           if [ -f build/host_integration_test/test_output/junit/test-outputs.json ]; then
             cp build/host_integration_test/test_output/junit/test-outputs.json integration_tests/reports/$(basename $test .dart)_results.json
           else

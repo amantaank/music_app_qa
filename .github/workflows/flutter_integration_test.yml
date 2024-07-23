@@ -13,7 +13,8 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.3.10'  
+        flutter-version: '3.0.5'  # Specify a known working Flutter version
+
     - name: Install dependencies
       run: flutter pub get
 
@@ -23,8 +24,10 @@ jobs:
         sudo xcodebuild -license accept
         sudo gem install cocoapods
 
-    - name: Create screenshots directory
-      run: mkdir -p test/screenshots
+    - name: Create directories for screenshots and reports
+      run: |
+        mkdir -p test/screenshots
+        mkdir -p test/reports
 
     - name: Build iOS app for testing
       run: flutter build ios --debug --no-codesign
@@ -39,11 +42,18 @@ jobs:
       run: flutter install --device-id $SIMULATOR_UDID
 
     - name: Run integration tests
-      run: flutter drive --target=test_driver/app.dart --device-id $SIMULATOR_UDID
+      run: flutter drive --target=test_driver/app.dart --device-id $SIMULATOR_UDID --machine > test/reports/integration_test_results.json
 
-    - name: Upload test artifacts
+    - name: Upload test screenshots
       if: always()
       uses: actions/upload-artifact@v2
       with:
         name: test-screenshots
         path: test/screenshots
+
+    - name: Upload test reports
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-reports
+        path: test/reports

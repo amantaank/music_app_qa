@@ -13,8 +13,8 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.3.10'  # Specify a known working Flutter version
-
+        flutter-version: '3.3.10'  
+        
     - name: Install dependencies
       run: flutter pub get
 
@@ -33,16 +33,18 @@ jobs:
       run: flutter build ios --debug --no-codesign
 
     - name: Start iPhone simulator
+      id: boot-sim
       run: |
         export SIMULATOR_UDID=$(xcrun simctl create "iPhone 15" com.apple.CoreSimulator.SimDeviceType.iPhone-14)
+        echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> $GITHUB_ENV
         xcrun simctl boot $SIMULATOR_UDID
         xcrun simctl bootstatus $SIMULATOR_UDID
 
     - name: Install app on simulator
-      run: flutter install --device-id $SIMULATOR_UDID
+      run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
 
     - name: Run integration tests
-      run: flutter drive --target=test_driver/app.dart --device-id $SIMULATOR_UDID --machine > test/reports/integration_test_results.json
+      run: flutter drive --target=test_driver/app.dart --device-id ${{ env.SIMULATOR_UDID }} --machine > test/reports/integration_test_results.json
 
     - name: Upload test screenshots
       if: always()

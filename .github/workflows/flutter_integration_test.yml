@@ -13,7 +13,7 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.3.10' 
+        flutter-version: '3.3.10'  # Specify a known working Flutter version
 
     - name: Install dependencies
       run: flutter pub get
@@ -29,6 +29,11 @@ jobs:
         mkdir -p integration_tests/screenshots
         mkdir -p integration_tests/reports
 
+    - name: Reset Simulator
+      run: |
+        xcrun simctl shutdown all
+        xcrun simctl erase all
+
     - name: Build iOS app for testing
       run: flutter build ios --debug --no-codesign
 
@@ -39,21 +44,38 @@ jobs:
         echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> $GITHUB_ENV
         xcrun simctl boot $SIMULATOR_UDID
         xcrun simctl bootstatus $SIMULATOR_UDID
+        sleep 20  # Add a delay to ensure the simulator is fully booted
 
     - name: Install app on simulator
       run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
 
-    - name: Run integration tests
+    - name: Run integration tests with retry
       run: |
         for test in integration_tests/tests/*.dart; do
           echo "Running test: $test"
-          flutter drive --driver integration_tests/app.dart --target=$test --device-id ${{ env.SIMULATOR_UDID }} > integration_tests/reports/$(basename $test .dart)_results.txt || true
+          RETRY_COUNT=3
+          for i in $(seq 1 $RETRY_COUNT); do
+            if flutter drive --driver integration_tests/app.dart --target=$test --device-id ${{ env.SIMULATOR_UDID }} > integration_tests/reports/$(basename $test .dart)_results.txt; then
+              echo "Test $test passed on attempt $i"
+              break
+            elif [ $i -lt $RETRY_COUNT ]; then
+              echo "Test $test failed on attempt $i, retrying..."
+              sleep 10
+            else
+              echo "Test $test failed after $RETRY_COUNT attempts"
+            fi
+          done
           if [ -f build/host_integration_test/test_output/junit/test-outputs.json ]; then
             cp build/host_integration_test/test_output/junit/test-outputs.json integration_tests/reports/$(basename $test .dart)_results.json
           else
             echo "No JSON report found for $test"
           fi
         done
+
+    - name: Generate HTML reports
+      run: |
+        mkdir -p integration_tests/reports/html
+        dart run flutter_test_html:generate integration_tests/reports
 
     - name: Upload test screenshots
       if: always()

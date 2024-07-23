@@ -46,7 +46,7 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
-		sfZLAH5wYX1DrutjWrdwAoIqGyM=
+		VnC8Dkdhyl2rI/llW4fWRYnrxa8=
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -54,7 +54,7 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
-		ESZ3GRSccVDGd7CEZvhyS254jF8=
+		98vMWDHXAAjvH+tPpjP3poeWB/g=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
 		<data>
@@ -82,7 +82,7 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
-		fak6uv18dENqV9KIcZwvmBfAdL8=
+		omhnfGMen48A+L7sMTYBIBzgfdw=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -134,7 +134,7 @@
 		</data>
 		<key>Frameworks/Flutter.framework/Flutter</key>
 		<data>
-		+NR4ygEovOG3W9ksexFFLzFpkm0=
+		OjaVfNsCcq7+0kANWNTdo9IIe8U=
 		</data>
 		<key>Frameworks/Flutter.framework/Headers/Flutter.h</key>
 		<data>
@@ -216,6 +216,18 @@
 		<data>
 		q5acp6rOkQ+ckG1e10c6ecrMr8U=
 		</data>
+		<key>Frameworks/Reachability.framework/Info.plist</key>
+		<data>
+		FfTccNX85kV3GjykJlOJEFqTKF4=
+		</data>
+		<key>Frameworks/Reachability.framework/Reachability</key>
+		<data>
+		IJSE4OqEf83vT2duKXF5MROjPd8=
+		</data>
+		<key>Frameworks/Reachability.framework/_CodeSignature/CodeResources</key>
+		<data>
+		Uw9ffOPkrwqT4tANi9dvIkBagLQ=
+		</data>
 		<key>Frameworks/Toast.framework/Info.plist</key>
 		<data>
 		y8K6Mo6UnWYlgYjZWzXBTG2y3cs=
@@ -227,6 +239,18 @@
 		<key>Frameworks/Toast.framework/_CodeSignature/CodeResources</key>
 		<data>
 		HT+bmLtxX4BveIeiteYxIlzJfj8=
+		</data>
+		<key>Frameworks/connectivity_plus.framework/Info.plist</key>
+		<data>
+		dtIdKW1VcFO5csjKAhXrn4XH+kU=
+		</data>
+		<key>Frameworks/connectivity_plus.framework/_CodeSignature/CodeResources</key>
+		<data>
+		hWGCAcpUStCtQv866zmhRd+iRV8=
+		</data>
+		<key>Frameworks/connectivity_plus.framework/connectivity_plus</key>
+		<data>
+		9GGc86fQOl+EB96K65zu99ddAc4=
 		</data>
 		<key>Frameworks/fluttertoast.framework/Info.plist</key>
 		<data>
@@ -290,7 +314,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		Ygnxs4l9bxSzt4TNSsabcKw8V3s=
+		9H0imaMtuMNTqw3HIhW+F/iRVXg=
 		</data>
 		<key>PkgInfo</key>
 		<data>
@@ -373,7 +397,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			829fhtEslSIrAsgFjCwl2KIi8tMrTD01G1O2WFbQ7K8=
+			4/wedHSZuLwC+Sz8/4ImqVsBCJ3gv2cvfnGWA3ECMU4=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -387,7 +411,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			KJMXRAIPi6PRl3GXEvTM+7CX4xbQkKuWlHe4jmMAUX8=
+			zgSX/aYdNTbd157uBbRCKkTGjpchD6OUiOU6ACK82m0=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.json</key>
@@ -436,7 +460,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			86c0BKH5tcgOsMrCtc4sqa1EAkrmfUJiaTs28mrMSws=
+			7gXxLr4drcld7CqJIG9/+CQdfQSPJ3Lt84BNN4Si6T0=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
@@ -527,7 +551,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			7PQAx9CbiKR759MTgKciObpcBBEsEAAGY28ZDzthobM=
+			/S6qHS8+QlLLOmx9zA0gnZDsqIJ1QGfPyMxSb7cTjN8=
 			</data>
 		</dict>
 		<key>Frameworks/Flutter.framework/Headers/Flutter.h</key>
@@ -670,6 +694,27 @@
 			sA+D9pONLsc1rI+XDHefj/KAY7kac9Ait6lUu4UjHDg=
 			</data>
 		</dict>
+		<key>Frameworks/Reachability.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			esPtxX9nZXCBuhwurdymeXOK7v78FIMJ6Ap7V1Iy78A=
+			</data>
+		</dict>
+		<key>Frameworks/Reachability.framework/Reachability</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			SNMQKOSC7AFIcR7wloA35rk1ApRlco36wjtIxHza0kQ=
+			</data>
+		</dict>
+		<key>Frameworks/Reachability.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			un5UUiE1/07lzrFB3EMB++TiOpTtoQocXW8K+xFIfmQ=
+			</data>
+		</dict>
 		<key>Frameworks/Toast.framework/Info.plist</key>
 		<dict>
 			<key>hash2</key>
@@ -689,6 +734,27 @@
 			<key>hash2</key>
 			<data>
 			p8VxKUxcsTwabIqThmhAQF7h8PojISeKOLvCHvnoeEA=
+			</data>
+		</dict>
+		<key>Frameworks/connectivity_plus.framework/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RgmYn6eReTfLhhKHYx32Xrz6Ps6JScVy9n4h4OrlGhc=
+			</data>
+		</dict>
+		<key>Frameworks/connectivity_plus.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			mxFLQNgcv3VsL/M1KujbX8Xgr8W3HfBHXKufZtr9Lrg=
+			</data>
+		</dict>
+		<key>Frameworks/connectivity_plus.framework/connectivity_plus</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			8hpSuNCloDvkX1z7+O4F+VT7O0GVsdhFaQo1W0VvWtI=
 			</data>
 		</dict>
 		<key>Frameworks/fluttertoast.framework/Info.plist</key>

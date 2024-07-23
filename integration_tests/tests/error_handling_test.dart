@@ -6,7 +6,6 @@ import '../pages/home_page.dart';
 import '../pages/search_page.dart';
 import '../pages/album_page.dart';
 import '../data/test_data.dart';
-import 'package:flutter/material.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

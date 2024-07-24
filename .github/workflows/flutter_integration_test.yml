@@ -36,9 +36,10 @@ jobs:
     - name: Build iOS app for testing
       run: flutter build ios --debug --no-codesign
 
-    - name: Start iPhone simulator
-      id: boot-sim
+    - name: Reset and Boot iPhone simulator
       run: |
+        xcrun simctl shutdown all
+        xcrun simctl erase all
         export SIMULATOR_UDID=$(xcrun simctl create "iPhone 14" com.apple.CoreSimulator.SimDeviceType.iPhone-14)
         echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> $GITHUB_ENV
         xcrun simctl boot $SIMULATOR_UDID
@@ -46,6 +47,9 @@ jobs:
 
     - name: Install app on simulator
       run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
+
+    - name: Wait for simulator to be ready
+      run: sleep 30
 
     - name: Run integration tests and generate XML reports
       run: |

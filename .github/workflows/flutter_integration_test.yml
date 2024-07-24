@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: macos-12
 
     steps:
     - name: Checkout code
@@ -15,17 +15,21 @@ jobs:
       with:
         flutter-version: '3.3.10'
 
-    - name: Install dependencies
-      run: flutter pub get
+    - name: Check Flutter version
+      run: flutter --version
 
     - name: Run Flutter doctor
-      run: flutter doctor
+      run: flutter doctor -v
+
+    - name: Install dependencies
+      run: flutter pub get
 
     - name: Set up Xcode
       run: |
         sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
         sudo xcodebuild -license accept
         sudo gem install cocoapods
+        pod setup
 
     - name: Create directories for reports
       run: |

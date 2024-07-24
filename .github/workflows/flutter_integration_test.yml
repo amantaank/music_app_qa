@@ -92,3 +92,9 @@ jobs:
       with:
         name: test-reports
         path: integration_tests/reports/html
+
+    - name: Cleanup Simulator
+      if: always()
+      run: |
+        xcrun simctl shutdown all
+        xcrun simctl erase all

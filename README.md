@@ -15,6 +15,13 @@ A data file is located here: `lib/data/test_data.dart`
 ## Flutter Version
 3.3.10
 
+## To run the test under the `integration_tests/tests` folder locally
+  flutter test integration_tests/tests
+  
+## Github Action .github/workflows/flutter_integration_test.yml
+ Configuration file designed to automate the process of running Flutter integration tests on an iOS simulator, 
+ however, I am facing issues running the test on an iOS simulator over GitHub Action.
+
 ## App Demo
 
 ![App Demo](app.gif)

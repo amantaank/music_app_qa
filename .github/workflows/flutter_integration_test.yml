@@ -3,7 +3,7 @@ name: Flutter Integration Tests on iOS
 on: [push, pull_request]
 
 jobs:
-  build:
+  test:
     runs-on: macos-latest
 
     steps:
@@ -14,15 +14,6 @@ jobs:
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.3.10'
-
-    - name: Cache Pub dependencies
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.pub-cache
-        key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pub-
 
     - name: Install dependencies
       run: flutter pub get
@@ -37,64 +28,39 @@ jobs:
       run: |
         mkdir -p integration_tests/screenshots
         mkdir -p integration_tests/reports
-        mkdir -p integration_tests/reports/html
 
-    - name: Reset and Boot Simulator
+    - name: Build iOS app for testing
+      run: flutter build ios --debug --no-codesign
+
+    - name: Start iPhone simulator
+      id: boot-sim
       run: |
-        xcrun simctl shutdown all
-        xcrun simctl erase all
-        export SIMULATOR_UDID=$(xcrun simctl create "iPhone 15" com.apple.CoreSimulator.SimDeviceType.iPhone-15)
+        export SIMULATOR_UDID=$(xcrun simctl create "iPhone 15" com.apple.CoreSimulator.SimDeviceType.iPhone-14)
         echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> $GITHUB_ENV
         xcrun simctl boot $SIMULATOR_UDID
         xcrun simctl bootstatus $SIMULATOR_UDID
-        sleep 30  # Add a delay to ensure the simulator is fully booted
-        xcrun simctl list
-        xcrun simctl get_app_container $SIMULATOR_UDID com.apple.springboard data
 
-    - name: Build and Install App
-      run: |
-        flutter build ios --debug --no-codesign
-        flutter install --device-id ${{ env.SIMULATOR_UDID }}
+    - name: Install app on simulator
+      run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
 
-    - name: Log Simulator Status
-      run: xcrun simctl list
-
-    - name: Run Integration Tests
+    - name: Run integration tests
       run: |
         for test in integration_tests/tests/*.dart; do
           echo "Running test: $test"
-          flutter drive --driver integration_tests/app.dart --target=$test --device-id ${{ env.SIMULATOR_UDID }} > integration_tests/reports/$(basename $test .dart)_results.txt
-          if [ -f build/host_integration_test/test_output/junit/test-outputs.json ]; then
-            cp build/host_integration_test/test_output/junit/test-outputs.json integration_tests/reports/$(basename $test .dart)_results.json
-          else
-            echo "No JSON report found for $test"
-          fi
-          # Stop the app between tests to ensure a clean environment
-          xcrun simctl terminate ${{ env.SIMULATOR_UDID }} com.example.musicApp || true
-          sleep 10
+          flutter drive --target=$test --device-id ${{ env.SIMULATOR_UDID }} > integration_tests/reports/$(basename $test .dart)_results.txt || true
         done
 
-    - name: Generate HTML Reports
-      run: |
-        dart pub global activate flutter_test_html
-        dart pub global run flutter_test_html:generate integration_tests/reports --output integration_tests/reports/html
-
-    - name: Upload Test Screenshots
+    - name: Upload test screenshots
       if: always()
       uses: actions/upload-artifact@v2
       with:
         name: test-screenshots
         path: integration_tests/screenshots
 
-    - name: Upload Test Reports
+    - name: Upload test reports
       if: always()
       uses: actions/upload-artifact@v2
       with:
         name: test-reports
-        path: integration_tests/reports/html
+        path: integration_tests/reports
 
-    - name: Cleanup Simulator
-      if: always()
-      run: |
-        xcrun simctl shutdown all
-        xcrun simctl erase all

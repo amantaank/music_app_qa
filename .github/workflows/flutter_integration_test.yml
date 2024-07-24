@@ -67,6 +67,9 @@ jobs:
           else
             echo "No JSON report found for $test"
           fi
+          # Stop the app between tests to ensure a clean environment
+          xcrun simctl terminate ${{ env.SIMULATOR_UDID }} com.example.musicApp || true
+          sleep 10
         done
 
     - name: Generate HTML reports

@@ -24,9 +24,8 @@ jobs:
         sudo xcodebuild -license accept
         sudo gem install cocoapods
 
-    - name: Create directories for screenshots and reports
+    - name: Create directories for reports
       run: |
-        mkdir -p integration_tests/screenshots
         mkdir -p integration_tests/reports
         mkdir -p integration_tests/reports/xml
         mkdir -p integration_tests/reports/html
@@ -49,8 +48,11 @@ jobs:
       run: |
         for test in integration_tests/tests/*.dart; do
           echo "Running test: $test"
-          flutter drive --target=$test --device-id ${{ env.SIMULATOR_UDID }} --driver integration_test/driver.dart --no-dds --no-build --screenshot > integration_tests/reports/xml/$(basename $test .dart)_results.xml || true
+          flutter drive --target=$test --device-id ${{ env.SIMULATOR_UDID }} --driver integration_test/driver.dart --no-dds --no-build --write-gen-log > integration_tests/reports/xml/$(basename $test .dart)_results.xml || true
         done
+
+    - name: Check XML report content
+      run: cat integration_tests/reports/xml/*.xml
 
     - name: Install Go
       run: |
@@ -69,13 +71,6 @@ jobs:
         for file in integration_tests/reports/xml/*.xml; do
           go-junit-report < $file > integration_tests/reports/html/$(basename $file .xml).html
         done
-
-    - name: Upload test screenshots
-      if: always()
-      uses: actions/upload-artifact@v2
-      with:
-        name: test-screenshots
-        path: integration_tests/screenshots
 
     - name: Upload test XML reports
       if: always()

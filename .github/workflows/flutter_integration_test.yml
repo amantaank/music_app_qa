@@ -28,6 +28,8 @@ jobs:
       run: |
         mkdir -p integration_tests/screenshots
         mkdir -p integration_tests/reports
+        mkdir -p integration_tests/reports/xml
+        mkdir -p integration_tests/reports/html
 
     - name: Build iOS app for testing
       run: flutter build ios --debug --no-codesign
@@ -35,7 +37,7 @@ jobs:
     - name: Start iPhone simulator
       id: boot-sim
       run: |
-        export SIMULATOR_UDID=$(xcrun simctl create "iPhone 15" com.apple.CoreSimulator.SimDeviceType.iPhone-14)
+        export SIMULATOR_UDID=$(xcrun simctl create "iPhone 14" com.apple.CoreSimulator.SimDeviceType.iPhone-14)
         echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> $GITHUB_ENV
         xcrun simctl boot $SIMULATOR_UDID
         xcrun simctl bootstatus $SIMULATOR_UDID
@@ -43,11 +45,20 @@ jobs:
     - name: Install app on simulator
       run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
 
-    - name: Run integration tests
+    - name: Run integration tests and generate XML reports
       run: |
         for test in integration_tests/tests/*.dart; do
           echo "Running test: $test"
-          flutter drive --target=$test --device-id ${{ env.SIMULATOR_UDID }} > integration_tests/reports/$(basename $test .dart)_results.txt || true
+          flutter drive --target=$test --device-id ${{ env.SIMULATOR_UDID }} --driver integration_test/driver.dart --no-dds --no-build --screenshot > integration_tests/reports/xml/$(basename $test .dart)_results.xml || true
+        done
+
+    - name: Install junitreport
+      run: go get -u github.com/jstemmer/go-junit-report
+
+    - name: Convert XML reports to HTML
+      run: |
+        for file in integration_tests/reports/xml/*.xml; do
+          go-junit-report < $file > integration_tests/reports/html/$(basename $file .xml).html
         done
 
     - name: Upload test screenshots
@@ -57,10 +68,16 @@ jobs:
         name: test-screenshots
         path: integration_tests/screenshots
 
-    - name: Upload test reports
+    - name: Upload test XML reports
       if: always()
       uses: actions/upload-artifact@v2
       with:
-        name: test-reports
-        path: integration_tests/reports
+        name: test-xml-reports
+        path: integration_tests/reports/xml
 
+    - name: Upload test HTML reports
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-html-reports
+        path: integration_tests/reports/html

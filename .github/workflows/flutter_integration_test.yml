@@ -13,7 +13,7 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.3.10'  # Specify a known working Flutter version
+        flutter-version: '3.3.10' 
 
     - name: Install dependencies
       run: flutter pub get
@@ -62,8 +62,14 @@ jobs:
               break
             elif [ $i -lt $RETRY_COUNT ]; then
               echo "Test $test failed on attempt $i, retrying..."
+              # Properly stop the app
+              xcrun simctl terminate ${{ env.SIMULATOR_UDID }} com.example.musicApp || true
+              sleep 5
+              # Restart the simulator to ensure a clean state
               xcrun simctl shutdown ${{ env.SIMULATOR_UDID }}
+              sleep 5
               xcrun simctl boot ${{ env.SIMULATOR_UDID }}
+              sleep 20
               flutter install --device-id ${{ env.SIMULATOR_UDID }}
               sleep 10
             else

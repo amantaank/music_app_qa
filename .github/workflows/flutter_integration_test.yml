@@ -48,7 +48,7 @@ jobs:
       run: |
         for test in integration_tests/tests/*.dart; do
           echo "Running test: $test"
-          flutter drive --target=$test --device-id ${{ env.SIMULATOR_UDID }} --driver integration_test/driver.dart --no-dds --no-build --write-gen-log > integration_tests/reports/xml/$(basename $test .dart)_results.xml || true
+          flutter drive --target=$test --device-id ${{ env.SIMULATOR_UDID }} --driver integration_test/driver.dart --no-dds --no-build > integration_tests/reports/xml/$(basename $test .dart)_results.xml || true
         done
 
     - name: Check XML report content

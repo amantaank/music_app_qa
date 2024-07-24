@@ -18,6 +18,9 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
+    - name: Run Flutter doctor
+      run: flutter doctor
+
     - name: Set up Xcode
       run: |
         sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer

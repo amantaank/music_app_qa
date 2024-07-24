@@ -39,25 +39,27 @@ jobs:
         mkdir -p integration_tests/reports
         mkdir -p integration_tests/reports/html
 
-    - name: Build iOS app for testing
-      run: flutter build ios --debug --no-codesign
-
-    - name: Start iPhone simulator
-      id: boot-sim
+    - name: Reset and Boot Simulator
       run: |
+        xcrun simctl shutdown all
+        xcrun simctl erase all
         export SIMULATOR_UDID=$(xcrun simctl create "iPhone 15" com.apple.CoreSimulator.SimDeviceType.iPhone-15)
         echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> $GITHUB_ENV
         xcrun simctl boot $SIMULATOR_UDID
         xcrun simctl bootstatus $SIMULATOR_UDID
         sleep 30  # Add a delay to ensure the simulator is fully booted
+        xcrun simctl list
+        xcrun simctl get_app_container $SIMULATOR_UDID com.apple.springboard data
 
-    - name: Install app on simulator
-      run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
+    - name: Build and Install App
+      run: |
+        flutter build ios --debug --no-codesign
+        flutter install --device-id ${{ env.SIMULATOR_UDID }}
 
-    - name: Log simulator status
+    - name: Log Simulator Status
       run: xcrun simctl list
 
-    - name: Run integration tests
+    - name: Run Integration Tests
       run: |
         for test in integration_tests/tests/*.dart; do
           echo "Running test: $test"
@@ -72,19 +74,19 @@ jobs:
           sleep 10
         done
 
-    - name: Generate HTML reports
+    - name: Generate HTML Reports
       run: |
         dart pub global activate flutter_test_html
         dart pub global run flutter_test_html:generate integration_tests/reports --output integration_tests/reports/html
 
-    - name: Upload test screenshots
+    - name: Upload Test Screenshots
       if: always()
       uses: actions/upload-artifact@v2
       with:
         name: test-screenshots
         path: integration_tests/screenshots
 
-    - name: Upload test reports
+    - name: Upload Test Reports
       if: always()
       uses: actions/upload-artifact@v2
       with:

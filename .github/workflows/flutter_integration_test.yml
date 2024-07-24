@@ -52,8 +52,13 @@ jobs:
           flutter drive --target=$test --device-id ${{ env.SIMULATOR_UDID }} --driver integration_test/driver.dart --no-dds --no-build --screenshot > integration_tests/reports/xml/$(basename $test .dart)_results.xml || true
         done
 
+    - name: Install Go
+      run: |
+        brew install go
+
     - name: Install junitreport
-      run: go get -u github.com/jstemmer/go-junit-report
+      run: |
+        go install github.com/jstemmer/go-junit-report@latest
 
     - name: Convert XML reports to HTML
       run: |

@@ -58,10 +58,14 @@ jobs:
 
     - name: Install junitreport
       run: |
+        export GOPATH=$HOME/go
+        export PATH=$GOPATH/bin:$PATH
         go install github.com/jstemmer/go-junit-report@latest
 
     - name: Convert XML reports to HTML
       run: |
+        export GOPATH=$HOME/go
+        export PATH=$GOPATH/bin:$PATH
         for file in integration_tests/reports/xml/*.xml; do
           go-junit-report < $file > integration_tests/reports/html/$(basename $file .xml).html
         done

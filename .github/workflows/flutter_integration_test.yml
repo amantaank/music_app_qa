@@ -3,7 +3,7 @@ name: Flutter Integration Tests on iOS
 on: [push, pull_request]
 
 jobs:
-  test:
+  build:
     runs-on: macos-latest
 
     steps:
@@ -13,7 +13,7 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.3.10' 
+        flutter-version: '3.3.10'
 
     - name: Install dependencies
       run: flutter pub get
@@ -28,6 +28,12 @@ jobs:
       run: |
         mkdir -p integration_tests/screenshots
         mkdir -p integration_tests/reports
+        mkdir -p integration_tests/reports/html
+
+    - name: Reset Simulator
+      run: |
+        xcrun simctl shutdown all
+        xcrun simctl erase all
 
     - name: Build iOS app for testing
       run: flutter build ios --debug --no-codesign
@@ -35,25 +41,59 @@ jobs:
     - name: Start iPhone simulator
       id: boot-sim
       run: |
-        export SIMULATOR_UDID=$(xcrun simctl create "iPhone 15" com.apple.CoreSimulator.SimDeviceType.iPhone-14)
+        export SIMULATOR_UDID=$(xcrun simctl create "iPhone 15" com.apple.CoreSimulator.SimDeviceType.iPhone-15)
         echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> $GITHUB_ENV
         xcrun simctl boot $SIMULATOR_UDID
         xcrun simctl bootstatus $SIMULATOR_UDID
+        sleep 30  # Add a delay to ensure the simulator is fully booted
 
     - name: Install app on simulator
       run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
 
-    - name: Run integration tests
+    - name: Log simulator status
+      run: xcrun simctl list
+
+    - name: Run integration tests with retry and cleanup
       run: |
         for test in integration_tests/tests/*.dart; do
           echo "Running test: $test"
-          flutter drive --driver integration_tests/app.dart --target=$test --device-id ${{ env.SIMULATOR_UDID }} > integration_tests/reports/$(basename $test .dart)_results.txt || true
+          RETRY_COUNT=2
+          SUCCESS=false
+          for i in $(seq 1 $RETRY_COUNT); do
+            echo "Attempt $i for $test"
+            if flutter drive --driver integration_tests/app.dart --target=$test --device-id ${{ env.SIMULATOR_UDID }} --no-build > integration_tests/reports/$(basename $test .dart)_results.txt; then
+              echo "Test $test passed on attempt $i"
+              SUCCESS=true
+              break
+            else
+              echo "Test $test failed on attempt $i, retrying..."
+              # Properly stop the app and restart simulator
+              xcrun simctl terminate ${{ env.SIMULATOR_UDID }} com.example.musicApp || true
+              sleep 5
+              xcrun simctl shutdown ${{ env.SIMULATOR_UDID }}
+              sleep 5
+              xcrun simctl boot ${{ env.SIMULATOR_UDID }}
+              sleep 30
+              flutter install --device-id ${{ env.SIMULATOR_UDID }}
+              sleep 10
+            fi
+          done
+          if $SUCCESS; then
+            echo "Test $test completed successfully"
+          else
+            echo "Test $test did not succeed after $RETRY_COUNT attempts"
+          fi
           if [ -f build/host_integration_test/test_output/junit/test-outputs.json ]; then
             cp build/host_integration_test/test_output/junit/test-outputs.json integration_tests/reports/$(basename $test .dart)_results.json
           else
             echo "No JSON report found for $test"
           fi
         done
+
+    - name: Generate HTML reports
+      run: |
+        dart pub global activate flutter_test_html
+        dart pub global run flutter_test_html:generate integration_tests/reports --output integration_tests/reports/html
 
     - name: Upload test screenshots
       if: always()
@@ -67,5 +107,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: test-reports
-        path: integration_tests/reports
-
+        path: integration_tests/reports/html

@@ -67,4 +67,29 @@ jobs:
           else
             echo "No JSON report found for $test"
           fi
-        d
+        done
+
+    - name: Generate HTML reports
+      run: |
+        dart pub global activate flutter_test_html
+        dart pub global run flutter_test_html:generate integration_tests/reports --output integration_tests/reports/html
+
+    - name: Upload test screenshots
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-screenshots
+        path: integration_tests/screenshots
+
+    - name: Upload test reports
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-reports
+        path: integration_tests/reports/html
+
+    - name: Cleanup Simulator
+      if: always()
+      run: |
+        xcrun simctl shutdown all
+        xcrun simctl erase all

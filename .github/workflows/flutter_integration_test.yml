@@ -46,16 +46,28 @@ jobs:
         xcrun simctl bootstatus $SIMULATOR_UDID
 
     - name: Wait for simulator to be ready
-      run: sleep 20
+      run: sleep 30
 
     - name: Install app on simulator
       run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
 
-    - name: Run integration tests and generate XML reports
+    - name: Run integration tests
       run: |
+        mkdir -p integration_tests/reports/xml
         for test in integration_tests/tests/*.dart; do
           echo "Running test: $test"
-          flutter drive --target=$test --driver integration_tests/driver.dart --device-id ${{ env.SIMULATOR_UDID }} --no-dds --no-build --write-results-to=integration_tests/reports/xml/$(basename $test .dart)_results.xml || true
+          flutter drive --target=$test --driver integration_tests/driver.dart --device-id ${{ env.SIMULATOR_UDID }} --no-dds --no-build | tee integration_tests/reports/xml/$(basename $test .dart)_results.log
+        done
+
+    - name: Convert log reports to XML
+      run: |
+        for file in integration_tests/reports/xml/*.log; do
+          # Convert the logs to JUnit XML format using a custom script or tool
+          # This step will vary depending on your specific needs and tools
+          # Example: cat $file | some-log-to-junit-xml-tool > ${file%.log}.xml
+          echo "Converting $file to XML"
+          # Placeholder for actual conversion command
+          mv $file ${file%.log}.xml
         done
 
     - name: Check XML report content

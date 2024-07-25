@@ -45,25 +45,24 @@ jobs:
         xcrun simctl boot $SIMULATOR_UDID
         xcrun simctl bootstatus $SIMULATOR_UDID
 
+    - name: Wait for simulator to be ready
+      run: sleep 20
+
     - name: Install app on simulator
       run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
-
-    - name: Wait for simulator to be ready
-      run: sleep 30
 
     - name: Run integration tests and generate XML reports
       run: |
         for test in integration_tests/tests/*.dart; do
           echo "Running test: $test"
-          flutter drive --target=$test --driver integration_tests/driver.dart --device-id ${{ env.SIMULATOR_UDID }} --no-dds --no-build > integration_tests/reports/xml/$(basename $test .dart)_results.xml || true
+          flutter drive --target=$test --driver integration_tests/driver.dart --device-id ${{ env.SIMULATOR_UDID }} --no-dds --no-build --write-results-to=integration_tests/reports/xml/$(basename $test .dart)_results.xml || true
         done
 
     - name: Check XML report content
       run: cat integration_tests/reports/xml/*.xml
 
     - name: Install Go
-      run: |
-        brew install go
+      run: brew install go
 
     - name: Install junitreport
       run: |

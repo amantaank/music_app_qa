@@ -15,21 +15,17 @@ jobs:
       with:
         flutter-version: '3.3.10'
 
-    - name: Check Flutter version
-      run: flutter --version
-
-    - name: Run Flutter doctor
-      run: flutter doctor -v
-
     - name: Install dependencies
       run: flutter pub get
+
+    - name: Run Flutter doctor
+      run: flutter doctor
 
     - name: Set up Xcode
       run: |
         sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
         sudo xcodebuild -license accept
         sudo gem install cocoapods
-        pod setup
 
     - name: Create directories for reports
       run: |
@@ -49,17 +45,11 @@ jobs:
         xcrun simctl boot $SIMULATOR_UDID
         xcrun simctl bootstatus $SIMULATOR_UDID
 
-    - name: List available devices
-      run: xcrun simctl list devices
-
-    - name: Wait for simulator to be ready
-      run: sleep 30
-
     - name: Install app on simulator
       run: flutter install --device-id ${{ env.SIMULATOR_UDID }}
 
-    - name: Capture simulator logs
-      run: xcrun simctl spawn ${{ env.SIMULATOR_UDID }} log stream --level=debug --style=compact --predicate 'eventType == logEvent' > simulator_logs.txt &
+    - name: Wait for simulator to be ready
+      run: sleep 30
 
     - name: Run integration tests and generate XML reports
       run: |
@@ -102,10 +92,3 @@ jobs:
       with:
         name: test-html-reports
         path: integration_tests/reports/html
-
-    - name: Upload simulator logs
-      if: always()
-      uses: actions/upload-artifact@v2
-      with:
-        name: simulator-logs
-        path: simulator_logs.txt

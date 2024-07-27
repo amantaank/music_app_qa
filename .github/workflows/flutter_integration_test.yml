@@ -26,6 +26,10 @@ jobs:
         sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
         sudo xcodebuild -license accept
         sudo gem install cocoapods
+        sudo gem install xcodeproj
+        flutter precache
+        flutter config --enable-ios
+        flutter doctor
 
     - name: Create directories for reports
       run: |
@@ -62,11 +66,7 @@ jobs:
     - name: Convert log reports to XML
       run: |
         for file in integration_tests/reports/xml/*.log; do
-          # Convert the logs to JUnit XML format using a custom script or tool
-          # This step will vary depending on your specific needs and tools
-          # Example: cat $file | some-log-to-junit-xml-tool > ${file%.log}.xml
           echo "Converting $file to XML"
-          # Placeholder for actual conversion command
           mv $file ${file%.log}.xml
         done
 
